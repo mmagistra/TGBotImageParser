@@ -199,7 +199,7 @@ class ImageFormatter:
 
 if __name__ == '__main__':
     formatter = ImageFormatter()
-    formatter.select_image_directory('images/parsed_images/debug_1_jpeg/')
+    formatter.select_image_directory('images/parsed_images/source_link/image_name/default.jpeg/')
     # formatter.rotate_image(90)
     # formatter.flip_image('horizontal')
     # formatter.crop_image(25, 25, 50, 50)
