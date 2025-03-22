@@ -199,18 +199,18 @@ class ImageFormatter:
 
 if __name__ == '__main__':
     formatter = ImageFormatter()
-    formatter.select_image_directory('images/parsed_images/source_link/image_name/default.jpeg/')
-    # formatter.rotate_image(90)
-    # formatter.flip_image('horizontal')
-    # formatter.crop_image(25, 25, 50, 50)
-    # formatter.resize_image(50, 50)
-    # formatter.grayscale_image()
-    # [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
-    # formatter.blur_image('box', 10)
-    # formatter.sharpen_image()
-    # formatter.smooth_image()
-    # formatter.find_edges()
-    # formatter.change_brightness(1.5)
-    # formatter.add_watermark('images/watermark.png', (100, 100))
-    # formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
+    formatter.select_image_directory('images/example_parsed_images/source_link/image_name/')
+    formatter.rotate_image(90)
+    formatter.flip_image('horizontal')
+    formatter.crop_image(25, 25, 50, 50)
+    formatter.resize_image(50, 50)
+    formatter.grayscale_image()
+    [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
+    formatter.blur_image('box', 10)
+    formatter.sharpen_image()
+    formatter.smooth_image()
+    formatter.find_edges()
+    formatter.change_brightness(1.5)
+    formatter.add_watermark('images/static/watermark.png', (100, 100))
+    formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
 
