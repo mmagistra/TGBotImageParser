@@ -55,14 +55,17 @@ def _check_website_access(url: str) -> str:
         page = requests.get(url)
         if page.status_code in range(200, 300):
             return 'done'
-        return f'Не удалось получить доступ к сайту: status_code {page.status_code}'
+        return f'Failed to access the site: status_code {page.status_code}'
     except Exception as e:
-        return f'Не удалось получить доступ к сайту: {e}'
+        return f'Failed to access the site: {e}'
 
 
 async def _parser(url: str) -> str:
     # Сохраняю ошибки, если не удалось скачать файл (пока не используется)
     download_error = []
+
+    # Очистка ссылки от лишних пробелов
+    url = url.strip()
 
     # Проверка доступа к сайту
     status = _check_website_access(url)
@@ -71,16 +74,15 @@ async def _parser(url: str) -> str:
 
     # Массив из ссылок на изображения
     image_links = _fetch_img_links(url)
-
     if len(image_links) == 0:
-        return "Не найдены изображения на сайте! Подходящий формат png, jpeg, jpg"
+        return "No images found on the site! Suitable format png, jpeg, jpg"
 
     # Асинхронное получение двоичных изображений
     try:
         async with aiohttp.ClientSession(trust_env=True) as session:
             imgs = await _fetch_all(session, image_links)
     except Exception as e:
-        return f"Не удалось получить изображение. Попробуйте снова. {e}"
+        return f"Failed to retrieve the image. Try again. {e}"
 
     # Путь images/parsed_images/название_изображения
     path_parsed_images = 'images/parsed_images'
@@ -107,14 +109,14 @@ async def _parser(url: str) -> str:
         try:  # Загружаем изображения
             file_extension = filename.split('.')[-1]
             if img is None:
-                raise IOError("Не удалось скачать файл")
+                raise IOError("Failed to download file")
             with open(os.path.join(file_folder, f'default.{file_extension}'), 'wb') as f:
                 f.write(img)
 
             # print(f'Скачано: {img_url}')
         except Exception as e:
             shutil.rmtree(file_folder)  # Удаляем созданную папку для этого файла
-            download_error.append(f'Не удалось скачать файл {e}')
+            download_error.append(f'Failed to download file {e}')
 
     return 'done'
 
@@ -128,5 +130,6 @@ def scrape_and_save_images(url: str) -> str:
 # Путь сохранение изображений как в тг в пункте "Хранение изображений"
 
 # Пример работы с выводом результата функции на экран
-address = 'https://scrapingclub.com/exercise/list_basic/'.strip()
-print(scrape_and_save_images(address))
+if __name__ == '__main__':
+    address = 'https://scrapingclub.com/exercise/list_basic/'
+    print(scrape_and_save_images(address))
