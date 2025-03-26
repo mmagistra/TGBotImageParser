@@ -7,21 +7,21 @@ import asyncio
 import os
 
 
-async def fetch(s: aiohttp.ClientSession, url: str):
+async def _fetch(s: aiohttp.ClientSession, url: str):
     async with s.get(url) as r:
         return await r.read()
 
 
-async def fetch_all(s: aiohttp.ClientSession, img_urls: list):
+async def _fetch_all(s: aiohttp.ClientSession, img_urls: list):
     tasks = []
     for url in img_urls:
-        task = asyncio.create_task(fetch(s, url))
+        task = asyncio.create_task(_fetch(s, url))
         tasks.append(task)
     res = await asyncio.gather(*tasks)
     return res
 
 
-def fetch_img_links(url: str) -> list:
+def _fetch_img_links(url: str) -> list:
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'lxml')
 
@@ -50,7 +50,7 @@ def fetch_img_links(url: str) -> list:
     return image_links
 
 
-def check_website_access(url: str) -> str:
+def _check_website_access(url: str) -> str:
     try:
         page = requests.get(url)
         if page.status_code in range(200, 300):
@@ -59,27 +59,24 @@ def check_website_access(url: str) -> str:
         return f'Не удалось получить доступ к сайту: {e}'
 
 
-async def parser(url: str) -> None:
+async def _parser(url: str) -> str:
     # Проверка доступа к сайту
-    status = check_website_access(url)
+    status = _check_website_access(url)
     if status != 'done':
-        print(status)
-        return
+        return status
 
     # Массив из ссылок на изображения
-    image_links = fetch_img_links(url)
+    image_links = _fetch_img_links(url)
 
     if len(image_links) == 0:
-        print("Не найдены изображения на сайте! Подходящий формат png, jpeg, jpg")
-        return
+        return "Не найдены изображения на сайте! Подходящий формат png, jpeg, jpg"
 
     # Асинхронное получение двоичных изображений
     try:
         async with aiohttp.ClientSession(trust_env=True) as session:
-            imgs = await fetch_all(session, image_links)
+            imgs = await _fetch_all(session, image_links)
     except Exception as e:
-        print(f"Не удалось получить изображение. Попробуйте снова. {e}")
-        return
+        return f"Не удалось получить изображение. Попробуйте снова. {e}"
 
     # Путь images/parsed_images/название_изображения
     path_parsed_images = 'images/parsed_images'
@@ -110,14 +107,20 @@ async def parser(url: str) -> None:
             with open(os.path.join(file_folder, f'default.{file_extension}'), 'wb') as f:
                 f.write(img)
 
-            print(f'Скачано: {img_url}')
+            # print(f'Скачано: {img_url}')
 
         except Exception as e:
-            print(f'Не удалось скачать файл {img_url}')
             shutil.rmtree(file_folder)  # Удаляем созданную папку для этого файла
+            return f'Не удалось скачать файл {img_url}'
+    return 'done'
 
-def main():
-    address = input("Введите адрес: ").strip()
-    asyncio.run(parser(address))
 
-main()
+def scrape_and_save_images(url: str) -> str:
+    return asyncio.run(_parser(url))
+
+
+# Руслан пользуется только функцией scrape_and_save_images(), которая на вход ожидает url
+# Результат функции 'done', если все успешно. В остальных случаях результат - передасться текст с ошибкой
+# Путь сохранение изображений как в тг впункте "Хранение изображений"
+address = input("Введите адрес: ").strip()
+print(scrape_and_save_images(address))
