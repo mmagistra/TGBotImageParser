@@ -24,10 +24,11 @@ async def _fetch_all(s: aiohttp.ClientSession, img_urls: list):
 def _fetch_img_links(url: str) -> list:
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'lxml')
-
     # Формирование списка со всеми ссылками на изображения
     image_links = []
-    domain = re.search(r'https?://[^/]+', url).group()  # Может ошибка вылететь, если сайт не http(s)
+
+    # Определение корневой ссылки (domain)
+    domain = re.search(r'https?://[^/]+', url).group()
     http = re.search(r'https?:', url).group()
     for item in soup.find_all('img'):
         # Поиск ссылки в img
@@ -46,6 +47,8 @@ def _fetch_img_links(url: str) -> list:
             image_links.append(http + link)
         elif link.startswith('/'):
             image_links.append(domain + link)
+        else:
+            image_links.append(domain + '/' + link)
 
     return image_links
 
@@ -64,8 +67,12 @@ async def _parser(url: str) -> str:
     # Сохраняю ошибки, если не удалось скачать файл (пока не используется)
     download_error = []
 
-    # Очистка ссылки от лишних пробелов
+    # Очистка ссылки от лишних пробелов и добавляем http://
     url = url.strip()
+    if 'http' not in url:
+        url = 'http://' + url
+    if url[-1] != '/':  # Жосткий костыль (исправлю). Без этого проблемы с сайтами без http
+        url += '/'
 
     # Проверка доступа к сайту
     status = _check_website_access(url)
