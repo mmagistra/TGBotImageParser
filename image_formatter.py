@@ -2,6 +2,15 @@ from PIL import Image, ImageFilter, ImageEnhance, ImageFont, ImageDraw
 import os
 
 
+class ImageDirectoryNotSelected(Exception):
+    pass
+
+
+class UnknownMode(Exception):
+    pass
+
+
+
 class ImageFormatter:
     def __init__(self, default_path='images/parsed_images'):
         self.default_path = default_path
@@ -20,11 +29,11 @@ class ImageFormatter:
                 self.current_image_format = f.split('.')[-1]
 
         if self.current_image_format is None:
-            raise Exception('Cannot find default image in directory')
+            raise ImageDirectoryNotSelected(f'Cannot find default image in directory {directory_path}')
 
     def rotate_image(self, angle):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             image = image.rotate(angle)
@@ -33,14 +42,14 @@ class ImageFormatter:
 
     def flip_image(self, mode='horizontal'):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         if mode == 'horizontal':
             axis = Image.FLIP_LEFT_RIGHT
         elif mode == 'vertical':
             axis = Image.FLIP_TOP_BOTTOM
         else:
-            raise Exception('Unknown flip mode')
+            raise UnknownMode('Unknown flip mode')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             image = image.transpose(axis)
@@ -49,7 +58,7 @@ class ImageFormatter:
 
     def crop_image(self, x_percent, y_percent, width_percent, height_percent):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             width, height = image.size
@@ -63,7 +72,7 @@ class ImageFormatter:
 
     def resize_image(self, width_percent, height_percent):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             width, height = image.size
@@ -75,7 +84,7 @@ class ImageFormatter:
 
     def grayscale_image(self):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             image = image.convert('L')
@@ -84,9 +93,9 @@ class ImageFormatter:
 
     def chanel_convert_image(self, chanel='r'):
         if chanel != 'r' and chanel != 'g' and chanel != 'b':
-            raise Exception('Unknown chanel')
+            raise UnknownMode('Unknown chanel')
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -103,10 +112,10 @@ class ImageFormatter:
 
     def blur_image(self, blur_type='box', blur_radius=10):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         if blur_type != 'box' and blur_type != 'gaussian':
-            raise Exception('Unknown blur type')
+            raise UnknownMode('Unknown blur type')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -120,7 +129,7 @@ class ImageFormatter:
 
     def sharpen_image(self):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -131,7 +140,7 @@ class ImageFormatter:
 
     def smooth_image(self):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -142,7 +151,7 @@ class ImageFormatter:
 
     def find_edges(self):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -153,7 +162,7 @@ class ImageFormatter:
 
     def change_brightness(self, scale_value):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             if self.current_image_format == 'png':
@@ -165,7 +174,7 @@ class ImageFormatter:
 
     def add_watermark(self, watermark_path, position_percentage=(0, 0)):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             watermark = Image.open(watermark_path).convert("RGBA")
@@ -179,7 +188,7 @@ class ImageFormatter:
 
     def add_text(self, text, x=0, y=0, font_size=16, color=(0, 0, 0)):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             font = ImageFont.load_default()
@@ -191,7 +200,7 @@ class ImageFormatter:
 
     def get_image_size(self):
         if self.current_image_directory is None:
-            raise Exception('Current image directory is not selected')
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             return image.size
@@ -199,18 +208,25 @@ class ImageFormatter:
 
 if __name__ == '__main__':
     formatter = ImageFormatter()
-    formatter.select_image_directory('images/example_parsed_images/source_link/image_name/')
-    formatter.rotate_image(90)
-    formatter.flip_image('horizontal')
-    formatter.crop_image(25, 25, 50, 50)
-    formatter.resize_image(50, 50)
-    formatter.grayscale_image()
-    [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
-    formatter.blur_image('box', 10)
-    formatter.sharpen_image()
-    formatter.smooth_image()
-    formatter.find_edges()
-    formatter.change_brightness(1.5)
-    formatter.add_watermark('images/static/watermark.png', (100, 100))
-    formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
+    try:
+        formatter.select_image_directory('images/example_parsed_images/source_link/image_name/')
+        formatter.rotate_image(90)
+        formatter.flip_image('horizontal')
+        formatter.crop_image(25, 25, 50, 50)
+        formatter.resize_image(50, 50)
+        formatter.grayscale_image()
+        [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
+        formatter.blur_image('box', 10)
+        formatter.sharpen_image()
+        formatter.smooth_image()
+        formatter.find_edges()
+        formatter.change_brightness(1.5)
+        formatter.add_watermark('images/static/watermark.png', (100, 100))
+        formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
+    except UnknownMode as e:
+        print(e)
+    except ImageDirectoryNotSelected as e:
+        print(e)
+    except Exception as e:
+        print(e)
 
