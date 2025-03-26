@@ -55,11 +55,15 @@ def _check_website_access(url: str) -> str:
         page = requests.get(url)
         if page.status_code in range(200, 300):
             return 'done'
+        return f'Не удалось получить доступ к сайту: status_code {page.status_code}'
     except Exception as e:
         return f'Не удалось получить доступ к сайту: {e}'
 
 
 async def _parser(url: str) -> str:
+    # Сохраняю ошибки, если не удалось скачать файл (пока не используется)
+    download_error = []
+
     # Проверка доступа к сайту
     status = _check_website_access(url)
     if status != 'done':
@@ -108,10 +112,10 @@ async def _parser(url: str) -> str:
                 f.write(img)
 
             # print(f'Скачано: {img_url}')
-
         except Exception as e:
             shutil.rmtree(file_folder)  # Удаляем созданную папку для этого файла
-            return f'Не удалось скачать файл {img_url}'
+            download_error.append(f'Не удалось скачать файл {e}')
+
     return 'done'
 
 
@@ -120,7 +124,9 @@ def scrape_and_save_images(url: str) -> str:
 
 
 # Руслан пользуется только функцией scrape_and_save_images(), которая на вход ожидает url
-# Результат функции 'done', если все успешно. В остальных случаях результат - передасться текст с ошибкой
-# Путь сохранение изображений как в тг впункте "Хранение изображений"
-address = input("Введите адрес: ").strip()
+# Результат функции 'done', если все успешно. В остальных случаях результат - передастся текст с ошибкой
+# Путь сохранение изображений как в тг в пункте "Хранение изображений"
+
+# Пример работы с выводом результата функции на экран
+address = 'https://scrapingclub.com/exercise/list_basic/'.strip()
 print(scrape_and_save_images(address))
