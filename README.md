@@ -10,7 +10,7 @@ Education project. Idea - create telegram bot which can parse web pages for imag
 - Methods can raise exceptions if the directory is not selected or if selected mode is not available. In this case, you can use the select_image_directory method to select the directory with the default image.
 - Also, methods can raise exceptions if the image format is not suitable for the selected method.
 
-# Photo parsing and downloading (At this point, the address must begin with http(s)!)
+# Photo parsing and downloading
 - Parsing is performed by libraries: BeautifulSoup, requests, aiohttp.
 - A single function scrape_and_save_images(address) is available, where address is a link to the site in str format.
 - The function returns 'done' in case of successful completion of the program or returns the text in string format with an error.
