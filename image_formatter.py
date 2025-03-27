@@ -21,6 +21,18 @@ class ImageFormatter:
             os.makedirs(self.default_path)
 
     def select_image_directory(self, directory_path):
+        """
+        Select the directory with the image to be processed.
+
+        Args:
+            directory_path (str): The path to the directory with the image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the directory is not selected or if the default image is not found in the directory.
+
+        Notes:
+            The image which will be processed is the one with the name "default.{image_format}" in the selected directory.
+        """
         if directory_path[-1] != '/':
             directory_path += '/'
         self.current_image_directory = directory_path
@@ -32,6 +44,19 @@ class ImageFormatter:
             raise ImageDirectoryNotSelected(f'Cannot find default image in directory {directory_path}')
 
     def rotate_image(self, angle):
+        """
+        Rotate the current image by a specified angle.
+
+        Args:
+            angle (int or float): The angle in degrees to rotate the image. Positive values rotate counterclockwise,
+                                  and negative values rotate clockwise.
+
+        Returns:
+            str: The path to the rotated image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -41,6 +66,21 @@ class ImageFormatter:
         return self.current_image_directory + 'rotated.' + self.current_image_format
 
     def flip_image(self, mode='horizontal'):
+        """
+        Flip the current image either horizontally or vertically.
+
+        Args:
+            mode (str, optional): The mode to flip the image.
+                                  Options are 'horizontal' or 'vertical'.
+                                  Defaults to 'horizontal'.
+
+        Returns:
+            str: The path to the flipped image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+            UnknownMode: If the flip mode is not recognized.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -57,6 +97,21 @@ class ImageFormatter:
         return self.current_image_directory + 'flipped_' + mode + '.' + self.current_image_format
 
     def crop_image(self, x_percent, y_percent, width_percent, height_percent):
+        """
+        Crop the current image based on specified percentages.
+
+        Args:
+            x_percent (float): The percentage from the left to start the crop.
+            y_percent (float): The percentage from the top to start the crop.
+            width_percent (float): The percentage of the original width to include in the crop.
+            height_percent (float): The percentage of the original height to include in the crop.
+
+        Returns:
+            str: The path to the cropped image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -71,6 +126,19 @@ class ImageFormatter:
         return self.current_image_directory + 'cropped.' + self.current_image_format
 
     def resize_image(self, width_percent, height_percent):
+        """
+        Resize the current image based on specified percentages.
+
+        Args:
+            width_percent (float): The percentage of the original width to set as the new width.
+            height_percent (float): The percentage of the original height to set as the new height.
+
+        Returns:
+            str: The path to the resized image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -83,6 +151,15 @@ class ImageFormatter:
         return self.current_image_directory + 'resized.' + self.current_image_format
 
     def grayscale_image(self):
+        """
+        Convert the current image to grayscale.
+
+        Returns:
+            str: The path to the grayscale image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -92,6 +169,19 @@ class ImageFormatter:
         return self.current_image_directory + 'grayscaled.' + self.current_image_format
 
     def chanel_convert_image(self, chanel='r'):
+        """
+        Convert the current image to the specified color chanel.
+
+        Args:
+            chanel (str): The color chanel to convert the image to. Possible values are 'r', 'g', 'b'.
+
+        Returns:
+            str: The path to the image with the specified color chanel.
+
+        Raises:
+            UnknownMode: If the specified chanel is not 'r', 'g', or 'b'.
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if chanel != 'r' and chanel != 'g' and chanel != 'b':
             raise UnknownMode('Unknown chanel')
         if self.current_image_directory is None:
@@ -111,6 +201,20 @@ class ImageFormatter:
         return self.current_image_directory + 'chanel_converted_' + chanel + '.' + self.current_image_format
 
     def blur_image(self, blur_type='box', blur_radius=10):
+        """
+        Blur the current image with a specified blur type and radius.
+
+        Args:
+            blur_type (str, optional): The type of blur. Options are 'box' or 'gaussian'. Defaults to 'box'.
+            blur_radius (int, optional): The radius of blur. Defaults to 10.
+
+        Returns:
+            str: The path to the blurred image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+            UnknownMode: If the specified blur type is not 'box' or 'gaussian'.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -128,6 +232,15 @@ class ImageFormatter:
         return self.current_image_directory + 'blurred.' + self.current_image_format
 
     def sharpen_image(self):
+        """
+        Sharpen the current image.
+
+        Returns:
+            str: The path to the sharpened image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -139,6 +252,15 @@ class ImageFormatter:
         return self.current_image_directory + 'sharpened.' + self.current_image_format
 
     def smooth_image(self):
+        """
+        Smooth the current image.
+
+        Returns:
+            str: The path to the smoothed image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -150,6 +272,15 @@ class ImageFormatter:
         return self.current_image_directory + 'smoothed.' + self.current_image_format
 
     def find_edges(self):
+        """
+        Find edges in the current image.
+
+        Returns:
+            str: The path to the image with found edges.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -161,6 +292,20 @@ class ImageFormatter:
         return self.current_image_directory + 'edges.' + self.current_image_format
 
     def change_brightness(self, scale_value):
+        """
+        Adjust the brightness of the current image.
+
+        Args:
+            scale_value (float): The factor by which to adjust the brightness.
+                                 Values greater than 1.0 increase brightness,
+                                 while values between 0.0 and 1.0 decrease brightness.
+
+        Returns:
+            str: The path to the image with adjusted brightness.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -173,6 +318,20 @@ class ImageFormatter:
         return self.current_image_directory + 'brightness_changed.' + self.current_image_format
 
     def add_watermark(self, watermark_path, position_percentage=(0, 0)):
+        """
+        Add watermark to the image.
+
+        Args:
+            watermark_path (str): The path to the watermark image.
+            position_percentage (tuple of int, optional): The position of the watermark in percentage of the image size.
+                Defaults to (0, 0), which is the top left corner of the image.
+
+        Returns:
+            str: The path to the resulting image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -187,6 +346,22 @@ class ImageFormatter:
         return self.current_image_directory + 'watermarked.' + self.current_image_format
 
     def add_text(self, text, x=0, y=0, font_size=16, color=(0, 0, 0)):
+        """
+        Add a text to the image.
+
+        Args:
+            text (str): The text to add.
+            x (int, optional): The x-coordinate of the text. Defaults to 0.
+            y (int, optional): The y-coordinate of the text. Defaults to 0.
+            font_size (int, optional): The font size of the text. Defaults to 16.
+            color (tuple, optional): The color of the text. Defaults to (0, 0, 0).
+
+        Returns:
+            str: The path to the resulting image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -199,6 +374,15 @@ class ImageFormatter:
         return self.current_image_directory + 'text_added.' + self.current_image_format
 
     def get_image_size(self):
+        """
+        Get the size of the image.
+
+        Returns:
+            tuple: A tuple (width, height) of the image size in pixels.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
         if self.current_image_directory is None:
             raise ImageDirectoryNotSelected('Current image directory is not selected')
 
@@ -208,25 +392,33 @@ class ImageFormatter:
 
 if __name__ == '__main__':
     formatter = ImageFormatter()
-    try:
-        formatter.select_image_directory('images/example_parsed_images/source_link/image_name/')
-        formatter.rotate_image(90)
-        formatter.flip_image('horizontal')
-        formatter.crop_image(25, 25, 50, 50)
-        formatter.resize_image(50, 50)
-        formatter.grayscale_image()
-        [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
-        formatter.blur_image('box', 10)
-        formatter.sharpen_image()
-        formatter.smooth_image()
-        formatter.find_edges()
-        formatter.change_brightness(1.5)
-        formatter.add_watermark('images/static/watermark.png', (100, 100))
-        formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
-    except UnknownMode as e:
-        print(e)
-    except ImageDirectoryNotSelected as e:
-        print(e)
-    except Exception as e:
-        print(e)
+
+    # IMAGE_DIRECTORY = 'images/parsed_images'
+    IMAGE_DIRECTORY = 'images/example_parsed_images'
+
+    # U can choose any watermark image from images/static and even create your own at images/static
+    WATERMARK_PATH = 'images/static/watermark.png'
+    image_names = os.listdir(IMAGE_DIRECTORY)
+    for image_name in image_names:
+        try:
+            formatter.select_image_directory(f'{IMAGE_DIRECTORY}/{image_name}/')
+            formatter.rotate_image(90)
+            formatter.flip_image('horizontal')
+            formatter.crop_image(25, 25, 50, 50)
+            formatter.resize_image(50, 50)
+            formatter.grayscale_image()
+            [formatter.chanel_convert_image(chanel) for chanel in ['r', 'g', 'b']]
+            formatter.blur_image('box', 10)
+            formatter.sharpen_image()
+            formatter.smooth_image()
+            formatter.find_edges()
+            formatter.change_brightness(1.5)
+            formatter.add_watermark(WATERMARK_PATH, (100, 100))
+            formatter.add_text('Hello, world!', 0, 0, 32, (255, 0, 0))
+        except UnknownMode as e:
+            print(f'Image {image_name} - {e}')
+        except ImageDirectoryNotSelected as e:
+            print(f'Image {image_name} - {e}')
+        except Exception as e:
+            print(f'Image {image_name} - {e}')
 
