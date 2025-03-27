@@ -397,7 +397,7 @@ if __name__ == '__main__':
     IMAGE_DIRECTORY = 'images/example_parsed_images'
 
     # U can choose any watermark image from images/static and even create your own at images/static
-    WATERMARK_PATH = 'images/static/watermark.png'
+    WATERMARK_PATH = 'images/static/example_watermark.png'
     image_names = os.listdir(IMAGE_DIRECTORY)
     for image_name in image_names:
         try:
