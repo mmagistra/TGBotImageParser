@@ -13,5 +13,5 @@ Education project. Idea - create telegram bot which can parse web pages for imag
 # Photo parsing and downloading
 - Parsing is performed by libraries: BeautifulSoup, requests, aiohttp.
 - A single function scrape_and_save_images(address) is available, where address is a link to the site in str format.
-- The function returns 'done' in case of successful completion of the program or returns the text in string format with an error.
+- The function returns a tuple (status, message). status = string done/error/warning. message = string OK/error_text/warning_text
 - Images are saved in the path images/parsed_images/* , where * is [image_name]/default.png (possible extensions are png, jpeg, jpg). 
