@@ -7,12 +7,11 @@ import asyncio
 import os
 
 
-async def _fetch(s: aiohttp.ClientSession, url: str) -> str:
+async def _fetch(s: aiohttp.ClientSession, url: str) -> bytes:
     async with s.get(url) as r:
         return await r.read()
 
 
-# Подумать о возвращения статуса парсинга изображения
 async def _fetch_all(s: aiohttp.ClientSession, img_urls: list) -> list:
     tasks = []
     for url in img_urls:
@@ -23,7 +22,7 @@ async def _fetch_all(s: aiohttp.ClientSession, img_urls: list) -> list:
 
 
 def _fetch_img_links(url: str) -> list:
-    page = requests.get(url)  # Тут может все сломаться
+    page = requests.get(url)
     soup = BeautifulSoup(page.text, 'lxml')
     # Формирование списка со всеми ссылками на изображения
     image_links = []
@@ -57,7 +56,7 @@ def _fetch_img_links(url: str) -> list:
 def _check_website_access(url: str) -> str:
     try:
         page = requests.get(url)
-        if page.status_code in range(200, 300):
+        if page.status_code == requests.codes.ok:
             return 'done'
         return f'Failed to access the site: status_code {page.status_code}'
     except Exception as e:
@@ -67,6 +66,9 @@ def _check_website_access(url: str) -> str:
 async def _parser(url: str) -> tuple:
     # Сохраняю ошибки, если не удалось запарсить/скачать фото
     download_error = []
+
+    if url is None:
+        return 'error', 'No link to the site was passed on'
 
     # Очистка ссылки от лишних пробелов и добавляем http://
     url = url.strip()
@@ -127,19 +129,30 @@ async def _parser(url: str) -> tuple:
     return ('done', 'OK') if not download_error else ('warning', '\n'.join(download_error))
 
 
-def scrape_and_save_images(url: str) -> tuple:
+def scrape_and_save_images(url: str = None) -> tuple:
+    """
+    Загружает и сохраняет все изображения с указанного веб-сайта.
+
+    Функция выполняет парсинг веб-страницы по переданной ссылке (`url`), извлекает
+    все изображения и сохраняет их локально. Возвращает статус выполнения и сообщение.
+
+    :param url: URL веб-страницы, с которой необходимо загрузить изображения.
+    :return: Кортеж (status, message), где:
+        - status (str):
+            * 'done' — парсинг и сохранение изображений выполнены успешно.
+            * 'warning' — процесс выполнен частично (есть ошибки при загрузке отдельных изображений).
+            * 'error' — возникла критическая ошибка, загрузка не удалась.
+        - message (str):
+            * 'OK' — если процесс завершен без ошибок.
+            * Текст ошибки — если возникла критическая ошибка.
+            * Описание проблемных изображений — если статус 'warning'.
+    """
     return asyncio.run(_parser(url))
 
 
-# ТГ бот пользуется только функцией scrape_and_save_images(), которая на вход ожидает url
-
-# Результат функции кортеж (status, message)
-# status = done/error/warning
-# message = OK/текст ошибки/ текст предупреждения
-# Пометка: done/warning - значит, что удалось запарсить и скачать изображения.
-#                         В message warning - из-за чего не получилось скачать/запарсить изображение и ссылка на него
-
-# Примеры работы с выводом результата функции на экран
+# ТГ бот пользуется только функцией scrape_and_save_images(), которая на вход ожидает url.
+# Функция возвращает кортеж (status, message). Подробнее в описании функции scrape_and_save_images().
+# Примеры работы с выводом результата функции на экран:
 if __name__ == '__main__':
     address = 'https://scrapingclub.com/exercise/list_basic/'
     print(scrape_and_save_images(address))
