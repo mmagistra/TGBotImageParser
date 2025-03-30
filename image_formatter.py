@@ -93,8 +93,8 @@ class ImageFormatter:
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             image = image.transpose(axis)
-            image.save(self.current_image_directory + 'flipped_' + mode + '.' + self.current_image_format)
-        return self.current_image_directory + 'flipped_' + mode + '.' + self.current_image_format
+            image.save(self.current_image_directory + 'flipped' +  '.' + self.current_image_format)
+        return self.current_image_directory + 'flipped' + '.' + self.current_image_format
 
     def crop_image(self, x_percent, y_percent, width_percent, height_percent):
         """
@@ -168,7 +168,7 @@ class ImageFormatter:
             image.save(self.current_image_directory + 'grayscaled.' + self.current_image_format)
         return self.current_image_directory + 'grayscaled.' + self.current_image_format
 
-    def chanel_convert_image(self, chanel='r'):
+    def chanel_convert_image(self, chanel='r'): 
         """
         Convert the current image to the specified color chanel.
 
@@ -197,8 +197,8 @@ class ImageFormatter:
                 g if chanel == 'g' else zeroes,
                 b if chanel == 'b' else zeroes
             ))
-            chanel_image.save(self.current_image_directory + 'chanel_converted_' + chanel + '.' + self.current_image_format)
-        return self.current_image_directory + 'chanel_converted_' + chanel + '.' + self.current_image_format
+            chanel_image.save(self.current_image_directory + 'chanel_converted' + '.' + self.current_image_format)
+        return self.current_image_directory + 'chanel_converted' +  '.' + self.current_image_format
 
     def blur_image(self, blur_type='box', blur_radius=10):
         """
