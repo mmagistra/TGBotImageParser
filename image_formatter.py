@@ -96,15 +96,15 @@ class ImageFormatter:
             image.save(self.current_image_directory + 'flipped' +  '.' + self.current_image_format)
         return self.current_image_directory + 'flipped' + '.' + self.current_image_format
 
-    def crop_image(self, x_percent, y_percent, width_percent, height_percent):
+    def crop_image(self, top_margin_percent, left_margin_percent, right_margin_percent, bottom_margin_percent):
         """
         Crop the current image based on specified percentages.
 
         Args:
-            x_percent (float): The percentage from the left to start the crop.
-            y_percent (float): The percentage from the top to start the crop.
-            width_percent (float): The percentage of the original width to include in the crop.
-            height_percent (float): The percentage of the original height to include in the crop.
+            top_margin_percent (float): The margin from the left edge of the original image. It is considered as a percentage of the entire image.
+            left_margin_percent (float): The margin from the top edge of the original image. It is considered as a percentage of the entire image.
+            right_margin_percent (float): The margin from the right edge of the original image. It is considered as a percentage of the entire image.
+            bottom_margin_percent (float): The margin from the bottom edge of the original image. It is considered as a percentage of the entire image.
 
         Returns:
             str: The path to the cropped image.
@@ -117,11 +117,36 @@ class ImageFormatter:
 
         with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
             width, height = image.size
-            x = int(width * x_percent / 100)
-            y = int(height * y_percent / 100)
-            crop_width = int(width * width_percent / 100)
-            crop_height = int(height * height_percent / 100)
+            x = int(width * top_margin_percent / 100)
+            y = int(height * left_margin_percent / 100)
+            crop_width = int((100 - left_margin_percent - right_margin_percent) * width / 100)
+            crop_height = int((100 - top_margin_percent - bottom_margin_percent) * height / 100)
             cropped_image = image.crop((x, y, x + crop_width, y + crop_height))
+            cropped_image.save(self.current_image_directory + 'cropped.' + self.current_image_format)
+        return self.current_image_directory + 'cropped.' + self.current_image_format
+
+    def crop_image_in_pixels(self, x_start, y_start, x_end, y_end):
+        """
+        Crop the current image based on specified percentages.
+
+        Args:
+            x_start (float): sets X parameter of the upper left image.
+            y_start (float): sets Y parameter of the upper left image.
+            x_end (float): sets X parameter of the bottom right image.
+            y_end (float): sets Y parameter of the bottom right image.
+
+        Returns:
+            str: The path to the cropped image.
+
+        Raises:
+            ImageDirectoryNotSelected: If the current image directory is not selected.
+        """
+        if self.current_image_directory is None:
+            raise ImageDirectoryNotSelected('Current image directory is not selected')
+
+        with Image.open(self.current_image_directory + 'default.' + self.current_image_format) as image:
+            width, height = x_end - x_start, y_end - y_start
+            cropped_image = image.crop((x_start, y_start, width, height))
             cropped_image.save(self.current_image_directory + 'cropped.' + self.current_image_format)
         return self.current_image_directory + 'cropped.' + self.current_image_format
 
