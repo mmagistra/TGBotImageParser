@@ -1,5 +1,6 @@
 # TGBotImageParser
 Education project. Idea - create telegram bot which can parse web pages for images. You can also process the received images.
+Telegram bot: @Web_Search_Image_Formatter_bot
 
 # Image formatting
 - Formatting of the image is done using the Pillow library.
